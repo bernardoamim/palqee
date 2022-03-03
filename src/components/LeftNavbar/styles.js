@@ -3,9 +3,14 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   width: var(--sidebar-width);
-  height: 100vh;
   background-color: #1a3054;
   padding: 8rem 0;
+  height: 100%;
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  overflow: hidden;
 `;
 
 export const NavContainer = styled.nav`

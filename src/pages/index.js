@@ -1,52 +1,61 @@
 import React, { useState } from 'react';
 import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
-import { Container } from '../styles/pages/Home';
-import BreadCrumbs from '../components/BreadCrumb';
 
-function Home(results) {
-  const initialState = results;
+import BreadCrumbs from '../components/BreadCrumb';
+import Table from '../components/Table';
+
+import { Container, Title, Description } from '../styles/pages/Home';
+
+function Home(props) {
+  const initialState = { ...props };
   const [characters, setCharacters] = useState(initialState.characters);
   const [crumbs, setCrumbs] = useState(['Home', 'Characters']);
 
   return (
     <Container>
       <BreadCrumbs crumbs={crumbs} />
-      <h1>Hello</h1>
+      <Title>Star Wars Characters</Title>
+      <Description>
+        <p>
+          <i>&#8220;{initialState.quote.content}&#8221;</i>
+          <span> - {initialState.quote.author}</span>
+        </p>
+      </Description>
+
+      <Table data={characters} />
     </Container>
   );
 }
 
 export async function getStaticProps() {
-  const client = new ApolloClient({
-    uri: 'https://rickandmortyapi.com/graphql/',
+  const response = await fetch(`https://api.quotable.io/random`);
+  const quote = await response.json();
+
+  const swapiClient = new ApolloClient({
+    uri: 'http://localhost:62273',
     cache: new InMemoryCache(),
   });
 
-  const { data } = await client.query({
+  const { data } = await swapiClient.query({
     query: gql`
-      query {
-        characters(page: 1) {
-          info {
-            count
-            pages
+      {
+        allPeople(first: 5) {
+          totalCount
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
           }
-          results {
-            name
+          people {
             id
-            location {
+            name
+            hairColor
+            skinColor
+            eyeColor
+            gender
+            homeworld {
               id
               name
             }
-            origin {
-              name
-              id
-            }
-            episode {
-              id
-              episode
-              air_date
-            }
-            image
           }
         }
       }
@@ -55,7 +64,8 @@ export async function getStaticProps() {
 
   return {
     props: {
-      characters: data.characters.results,
+      characters: data.allPeople.people,
+      quote,
     },
   };
 }

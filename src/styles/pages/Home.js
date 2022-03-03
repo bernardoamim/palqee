@@ -1,5 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import styled from 'styled-components';
+import Table from '../../components/Table';
 
 export const Container = styled.div`
   width: 100%;
@@ -7,16 +8,25 @@ export const Container = styled.div`
   padding: 2.5rem;
   display: flex;
   flex-direction: column;
+`;
 
-  h1 {
-    font-size: 54px;
-    color: ${props => props.theme.colors.primary};
-    margin-top: 40px;
-  }
+export const Title = styled.h1`
+  font-size: 2.5rem;
+  color: ${props => props.theme.colors.highlight};
+  margin-top: 2.5rem;
+`;
 
-  p {
-    margin-top: 24px;
-    font-size: 24px;
-    line-height: 32px;
+export const Description = styled.cite`
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  line-height: 2rem;
+  padding: 1rem;
+  background-color: #f2f2f2;
+  color: #63646a;
+  border-radius: 8px;
+
+  span {
+    color: #333;
+    margin-left: 0.5rem;
   }
 `;

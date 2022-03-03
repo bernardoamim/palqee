@@ -1,20 +1,30 @@
 import React, { useCallback, useState } from 'react';
+import {
+  Container,
+  TableHead,
+  TableBody,
+  TableHeaderRow,
+  TableBodyRow,
+  SortTriangle,
+} from './styles';
 
 function sortData({ tableData, key, reverse }) {
   if (!key) return tableData;
+  console.log('1');
 
-  const sortedData = tableData.sort((a, b) =>
-    tableData[key] > b[key] ? 1 : -1,
-  );
+  const sortedData = tableData.sort((a, b) => (a[key] > b[key] ? 1 : -1));
+
+  console.log(sortedData);
 
   if (reverse) return sortedData.reverse();
 
+  console.log('2');
   return sortedData;
 }
 
 function SortButton({ sortOrder, columnKey, sortKey, onClick }) {
   return (
-    <button
+    <SortTriangle
       type="button"
       onClick={onClick}
       className={`${
@@ -24,20 +34,21 @@ function SortButton({ sortOrder, columnKey, sortKey, onClick }) {
       }`}
     >
       &#9650;
-    </button>
+    </SortTriangle>
   );
 }
 
 function Table({ data }) {
-  const [sortKey, setSortKey] = useState('id');
+  const [sortKey, setSortKey] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
 
   const headers = [
-    { key: 'id', label: 'ID' },
-    { key: 'first_name', label: 'First Name' },
-    { key: 'last_name', label: 'Last Name' },
-    { key: 'email', label: 'Email' },
+    { key: 'name', label: 'Name' },
+    { key: 'hairColor', label: 'Hair Color' },
+    { key: 'skinColor', label: 'Skin Color' },
+    { key: 'eyeColor', label: 'Eye Color' },
     { key: 'gender', label: 'Gender' },
+    { key: 'homeworld', label: 'Homeworld' },
   ];
 
   const sortedData = useCallback(
@@ -52,34 +63,36 @@ function Table({ data }) {
   }
 
   return (
-    <table>
-      <thead>
-        <tr>
-          {headers.map(row => (
-            <td key={row.key}>
-              {row.label}
+    <Container>
+      <TableHead>
+        <TableHeaderRow>
+          {headers.map(column => (
+            <td key={column.key}>
+              {column.label}
+
               <SortButton
-                columnKey={row.key}
-                onClick={() => changeSort(row.key)}
+                columnKey={column.key}
+                onClick={() => changeSort(column.key)}
                 {...{ sortOrder, sortKey }}
               />
             </td>
           ))}
-        </tr>
-      </thead>
+        </TableHeaderRow>
+      </TableHead>
 
-      <tbody>
-        {sortedData().map(person => (
-          <tr key={person.id}>
-            <td>{person.id}</td>
-            <td>{person.first_name}</td>
-            <td>{person.last_name}</td>
-            <td>{person.email}</td>
-            <td>{person.gender}</td>
-          </tr>
+      <TableBody>
+        {sortedData().map(character => (
+          <TableBodyRow key={character.id}>
+            <td>{character.name}</td>
+            <td>{character.hairColor}</td>
+            <td>{character.skinColor}</td>
+            <td>{character.gender}</td>
+            <td>{character.eyeColor}</td>
+            <td>{character.homeworld.name}</td>
+          </TableBodyRow>
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Container>
   );
 }
 
