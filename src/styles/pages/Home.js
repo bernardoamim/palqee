@@ -1,6 +1,5 @@
 /* eslint-disable import/prefer-default-export */
 import styled from 'styled-components';
-import Table from '../../components/Table';
 
 export const Container = styled.div`
   width: 100%;
@@ -28,5 +27,25 @@ export const Description = styled.cite`
   span {
     color: #333;
     margin-left: 0.5rem;
+  }
+`;
+
+export const Pagination = styled.footer`
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  color: #63646a;
+
+  > button {
+    margin-left: 0.5rem;
+    font-size: 1rem;
+    color: #63646a;
+
+    &.selected {
+      color: ${props => props.theme.colors.highlight};
+      text-decoration: underline;
+      font-weight: bold;
+    }
   }
 `;

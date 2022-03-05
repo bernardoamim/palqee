@@ -109,5 +109,9 @@ export const TableBodyRow = styled.tr`
 
   > td {
     padding: 1rem;
+
+    > a:hover {
+      text-decoration: underline;
+    }
   }
 `;

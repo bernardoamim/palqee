@@ -14,7 +14,7 @@ function LeftNavbar() {
         </NavLink>
 
         <Accordion open key="StarWars" title="Star Wars">
-          <NavLink href="/characters" className="navlink-nested-1">
+          <NavLink href="/" className="navlink-nested-1">
             <UserCircle
               height="1.2rem"
               stroke="rgb(172, 173, 185)"

@@ -141,7 +141,9 @@ function Table({ data }) {
         <TableBody>
           {sortedData.map(character => (
             <TableBodyRow key={character.id}>
-              <td>{character.name}</td>
+              <td>
+                <a href={`/characters/${character.id}`}>{character.name}</a>
+              </td>
               <td>{character.hairColor}</td>
               <td>{character.skinColor}</td>
               <td>{character.eyeColor}</td>

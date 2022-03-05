@@ -12,9 +12,9 @@ function BreadCrumbs({ crumbs }) {
         const disabledClass = isLast(idx) ? 'disabled' : '';
 
         return (
-          <CrumbItem key={crumb}>
-            <a href={`/${crumb}`} className={disabledClass}>
-              {crumb}
+          <CrumbItem key={crumb.key}>
+            <a href={`/${crumb.key}`} className={disabledClass}>
+              {crumb.label}
             </a>
             {!isLast(idx) && (
               <ChevronRight height="1rem" stroke="#1a3054" strokeWidth={2.5} />

@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { ApolloClient, gql, InMemoryCache } from '@apollo/client';
+import { gql } from '@apollo/client';
 
 import BreadCrumbs from '../components/BreadCrumb';
 import Table from '../components/Table';
 
-import { Container, Title, Description } from '../styles/pages/Home';
+import {
+  Container,
+  Title,
+  Description,
+  Pagination,
+} from '../styles/pages/Home';
+import { createClient } from '../lib/client';
 
 function Home(props) {
-  const [crumbs, setCrumbs] = useState(['Home', 'Characters']);
   const initialState = { ...props };
+  const [crumbs, setCrumbs] = useState([{ key: '', label: 'Characters' }]);
   const [characters, setCharacters] = useState(initialState.characters);
+  const [perPage, setPerPage] = useState(5);
 
   return (
     <Container>
@@ -23,6 +30,30 @@ function Home(props) {
       </Description>
 
       <Table data={characters} />
+      <Pagination>
+        <p>Per page:</p>
+        <button
+          type="button"
+          onClick={() => setPerPage(5)}
+          className={perPage === 5 ? 'selected' : ''}
+        >
+          5
+        </button>
+        <button
+          type="button"
+          onClick={() => setPerPage(10)}
+          className={perPage === 10 ? 'selected' : ''}
+        >
+          10
+        </button>
+        <button
+          type="button"
+          onClick={() => setPerPage(20)}
+          className={perPage === 20 ? 'selected' : ''}
+        >
+          20
+        </button>
+      </Pagination>
     </Container>
   );
 }
@@ -31,12 +62,9 @@ export async function getStaticProps() {
   const response = await fetch(`https://api.quotable.io/random`);
   const quote = await response.json();
 
-  const swapiClient = new ApolloClient({
-    uri: 'http://localhost:53597',
-    cache: new InMemoryCache(),
-  });
+  const apollo = createClient();
 
-  const { data } = await swapiClient.query({
+  const { data } = await apollo.query({
     query: gql`
       {
         allPeople(first: 5) {
@@ -71,6 +99,9 @@ export async function getStaticProps() {
 
   return {
     props: {
+      initialApolloState: apollo.cache.extract(),
+      totalCount: data.allPeople.totalCount,
+      pageInfo: data.allPeople.pageInfo,
       characters: formattedCharecters,
       quote,
     },

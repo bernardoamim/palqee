@@ -17,4 +17,13 @@ export const CrumbItem = styled.li`
   > svg {
     margin: 0 1rem;
   }
+
+  > a:hover {
+    text-decoration: underline;
+  }
+
+  > a.disabled {
+    pointer-events: none;
+    color: ${props => props.theme.colors.grey};
+  }
 `;
