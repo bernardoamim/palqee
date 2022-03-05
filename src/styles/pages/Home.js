@@ -33,9 +33,15 @@ export const Description = styled.cite`
 export const Pagination = styled.footer`
   margin-top: 2rem;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
   width: 100%;
   color: #63646a;
+`;
+
+export const PerPageControl = styled.div`
+  display: flex;
+  align-items: center;
 
   > button {
     margin-left: 0.5rem;
@@ -46,6 +52,28 @@ export const Pagination = styled.footer`
       color: ${props => props.theme.colors.highlight};
       text-decoration: underline;
       font-weight: bold;
+    }
+  }
+`;
+
+export const PageControl = styled.div`
+  display: flex;
+  align-items: center;
+
+  > p {
+    color: ${props => props.theme.colors.primary};
+    margin: 1rem;
+  }
+
+  > button {
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    background-color: #c2c2c2;
+    font-size: 1rem;
+    color: ${props => props.theme.colors.white};
+
+    &:disabled {
+      cursor: not-allowed;
     }
   }
 `;
