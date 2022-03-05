@@ -7,9 +7,9 @@ import Table from '../components/Table';
 import { Container, Title, Description } from '../styles/pages/Home';
 
 function Home(props) {
+  const [crumbs, setCrumbs] = useState(['Home', 'Characters']);
   const initialState = { ...props };
   const [characters, setCharacters] = useState(initialState.characters);
-  const [crumbs, setCrumbs] = useState(['Home', 'Characters']);
 
   return (
     <Container>
@@ -32,7 +32,7 @@ export async function getStaticProps() {
   const quote = await response.json();
 
   const swapiClient = new ApolloClient({
-    uri: 'http://localhost:62273',
+    uri: 'http://localhost:53597',
     cache: new InMemoryCache(),
   });
 
@@ -62,9 +62,16 @@ export async function getStaticProps() {
     `,
   });
 
+  const formattedCharecters = data.allPeople.people.map(
+    ({ homeworld, ...rest }) => ({
+      homeworld: homeworld.name,
+      ...rest,
+    }),
+  );
+
   return {
     props: {
-      characters: data.allPeople.people,
+      characters: formattedCharecters,
       quote,
     },
   };

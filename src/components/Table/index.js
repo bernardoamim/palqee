@@ -1,46 +1,49 @@
-import React, { useCallback, useState } from 'react';
+/* eslint-disable jsx-a11y/label-has-associated-control */
+import React, { useCallback, useState, useEffect } from 'react';
 import {
   Container,
   TableHead,
   TableBody,
+  FilterSection,
+  TableContent,
   TableHeaderRow,
   TableBodyRow,
+  StyledSortButton,
   SortTriangle,
 } from './styles';
 
 function sortData({ tableData, key, reverse }) {
   if (!key) return tableData;
-  console.log('1');
 
   const sortedData = tableData.sort((a, b) => (a[key] > b[key] ? 1 : -1));
 
-  console.log(sortedData);
-
   if (reverse) return sortedData.reverse();
 
-  console.log('2');
   return sortedData;
 }
 
-function SortButton({ sortOrder, columnKey, sortKey, onClick }) {
+function SortButton({ columnKey, onClick, sortOrder, sortKey, title }) {
   return (
-    <SortTriangle
-      type="button"
-      onClick={onClick}
-      className={`${
-        sortKey === columnKey && sortOrder === 'desc'
-          ? 'sort-button sort-reverse'
-          : 'sort-button'
-      }`}
-    >
-      &#9650;
-    </SortTriangle>
+    <StyledSortButton type="button" onClick={onClick}>
+      {title}
+
+      <SortTriangle
+        className={
+          sortKey === columnKey && sortOrder === 'desc' ? 'sort-reverse' : ''
+        }
+      >
+        &#9650;
+      </SortTriangle>
+    </StyledSortButton>
   );
 }
 
 function Table({ data }) {
   const [sortKey, setSortKey] = useState('name');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [sortedData, setSortedData] = useState(data);
+  const [filterBy, setFilterBy] = useState('');
+  const [searchText, setSearchText] = useState('');
 
   const headers = [
     { key: 'name', label: 'Name' },
@@ -51,47 +54,103 @@ function Table({ data }) {
     { key: 'homeworld', label: 'Homeworld' },
   ];
 
-  const sortedData = useCallback(
-    () => sortData({ tableData: data, sortKey, reverse: sortOrder === 'desc' }),
-    [data, sortKey, sortOrder],
-  );
+  useEffect(() => {
+    const sorted = sortData({
+      tableData: data,
+      key: sortKey,
+      reverse: sortOrder === 'desc',
+    });
 
-  function changeSort(key) {
+    setSortedData(sorted);
+  }, [data, sortKey, sortOrder]);
+
+  const handleSortChange = useCallback(key => {
     setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
 
     setSortKey(key);
-  }
+  }, []);
+
+  const handleFilterByChange = useCallback(event => {
+    setFilterBy(event.target.value);
+  }, []);
+
+  const handleSearchTextChange = useCallback(event => {
+    setSearchText(event.target.value);
+  }, []);
+
+  useEffect(() => {
+    if (!searchText.length) {
+      setSortedData(data);
+      setSearchText('');
+      return;
+    }
+
+    const filteredData = data.filter(character =>
+      String(character[filterBy])
+        .toLowerCase()
+        .includes(String(searchText).toLowerCase()),
+    );
+
+    setSortedData(filteredData);
+  }, [searchText, filterBy]);
 
   return (
     <Container>
-      <TableHead>
-        <TableHeaderRow>
-          {headers.map(column => (
-            <td key={column.key}>
-              {column.label}
+      <FilterSection>
+        <label htmlFor="columns">Filter by:</label>
 
-              <SortButton
-                columnKey={column.key}
-                onClick={() => changeSort(column.key)}
-                {...{ sortOrder, sortKey }}
-              />
-            </td>
+        <select
+          name="columns"
+          id="columns"
+          onChange={e => handleFilterByChange(e)}
+          defaultValue=""
+        >
+          <option disabled value="">
+            -- select an option --
+          </option>
+          <option value="hairColor">Hair Color</option>
+          <option value="eyeColor">Eye Color</option>
+          <option value="homeworld">Homeworld</option>
+        </select>
+
+        <input
+          type="text"
+          placeholder="Search..."
+          onChange={e => handleSearchTextChange(e)}
+          disabled={!filterBy.length}
+          value={searchText}
+        />
+      </FilterSection>
+      <TableContent>
+        <TableHead>
+          <TableHeaderRow>
+            {headers.map(column => (
+              <td key={column.key}>
+                <SortButton
+                  columnKey={column.key}
+                  onClick={() => handleSortChange(column.key)}
+                  sortOrder={sortOrder}
+                  sortKey={sortKey}
+                  title={column.label}
+                />
+              </td>
+            ))}
+          </TableHeaderRow>
+        </TableHead>
+
+        <TableBody>
+          {sortedData.map(character => (
+            <TableBodyRow key={character.id}>
+              <td>{character.name}</td>
+              <td>{character.hairColor}</td>
+              <td>{character.skinColor}</td>
+              <td>{character.eyeColor}</td>
+              <td>{character.gender}</td>
+              <td>{character.homeworld}</td>
+            </TableBodyRow>
           ))}
-        </TableHeaderRow>
-      </TableHead>
-
-      <TableBody>
-        {sortedData().map(character => (
-          <TableBodyRow key={character.id}>
-            <td>{character.name}</td>
-            <td>{character.hairColor}</td>
-            <td>{character.skinColor}</td>
-            <td>{character.gender}</td>
-            <td>{character.eyeColor}</td>
-            <td>{character.homeworld.name}</td>
-          </TableBodyRow>
-        ))}
-      </TableBody>
+        </TableBody>
+      </TableContent>
     </Container>
   );
 }
